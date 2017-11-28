@@ -1,21 +1,21 @@
 var express = require('express');
 var router = express.Router();
 var bcrypt = require('bcrypt');
-var User = require('../models/user')
+var User = require('../../models/user');
+var Transaction = require('../../models/transaction');
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  var message = "";
-  var hashed_password = req.params.password;
-  User.find({ username: req.params.username}, function(error,docs){
+router.get('', function(req, res, next) {
+  console.log(req.query.username)
+  User.findOne({ username: req.query.username}, function(error,doc){
     if(error)
       res.send(error);
     else{
-      bcrypt.compare(req.params.password, docs[0].hashed_password).then(function(res) {
-          if(res == true){
-            res.json(docs);
+      bcrypt.compare(req.query.password, doc.hashed_password).then(function(isright) {
+          if(isright === true){
+            res.json(doc)
           }
           else {
-            res.send("not found");
+            res.json("failed")
           }
       });
 

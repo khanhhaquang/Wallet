@@ -1,47 +1,46 @@
 var express = require('express');
 var router = express.Router();
-var User = require('../models/user');
-var Transaction = require('../models/transaction');
+var User = require('../../models/user');
+var Transaction = require('../../models/transaction');
 /* GET home page. */
-router.post('/sendmoney', function(req, res, next) {
-  User.find({ username: req.params.from_user }, function(error,docs){
+router.post('', function(req, res, next) {
+  User.findOne({ username: req.body.from_user }, function(error,doc){
     if(error)
       res.send(error);
     else{
-      var money = docs[0].money - req.params.money;
-      docs[0].set({money: money });
-      docs[0].save(function (err, user) {
+      var money = doc.money - req.body.money;
+      doc.set({money: money });
+      doc.save(function (err, user) {
         if (err) return res.send(err);
       });
     }
   })
-  User.find({ username: req.params.to_user }, function(error,docs){
+  User.findOne({ username: req.body.to_user }, function(error,doc){
     if(error)
       res.send(error);
     else{
-      var money = docs[0].money + req.params.money;
-      docs[0].set({money: money });
-      docs[0].save(function (err, user) {
+      var money = parseFloat(doc.money) + parseFloat(req.body.money);
+      console.log("new money of receiver "+ money);
+      doc.set({money: money });
+      doc.save(function (err, user) {
         if (err) return res.send(err);
       });
     }
   })
   var newtransaction = {
-    from_user: req.params.from_user,
-    to_user: req.params.to_user,
-    money: req.params.money,
-    date:req.params.date
+    from_user: req.body.from_user,
+    to_user: req.body.to_user,
+    money: req.body.money,
+    date:req.body.date
   }
   Transaction.create(newtransaction,function(error, newtransaction){
     if(error)
       res.send(error)
     else{
-      res.send("success");
+      res.json(newtransaction);
     }
   })
 });
 
-
-});
 
 module.exports = router;

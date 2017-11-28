@@ -15,9 +15,9 @@ var TransactionSchema = new Schema({
     money:{
       type: Number,
       required: true,
-    }
+    },
     date:{
-      type: Date,
+      type: String,
     }
 });
 
